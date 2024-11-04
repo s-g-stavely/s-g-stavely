@@ -34,8 +34,9 @@ let postsArray = [
 //[ "posts/2020-11-10-Special-Characters-Example.html", encodeURI( 'Spéci@l "Character\'s" Examp|e' ) ]
 //[ "posts/2020-11-10-My-Third-Post-Example.html" ],
 //[ "posts/2020-11-10-My-Second-Post-Example.html" ],
-[ "posts/06-Jan-2024-cpp-opinions.html" ],
-[ "posts/4-Jul-2023-Buying-A-Property.html" ],
+[ "posts/2024-11-04-Typing-A-Little-Faster.html" ],
+[ "posts/2024-01-06-cpp-opinions.html" ],
+[ "posts/2023-07-04-Buying-A-Property.html" ],
 [ "posts/How-To-Create-Zonelets-From-Markdown.html" ],
 [ "posts/How-To-Use-An-Android-Phone-As-Webcam.html" ],
 ];
@@ -142,7 +143,7 @@ for ( let i = 0; i < postsArray.length; i++ ) {
 postListHTML += "</ul>";
 
 //Generate the Recent Post List HTML, which can be shown on the home page (or wherever you want!)
-let recentPostsCutoff = 3; //Hey YOU! Change this number to set how many recent posts to show before cutting it off with a "more posts" link.
+let recentPostsCutoff = 20; //Hey YOU! Change this number to set how many recent posts to show before cutting it off with a "more posts" link.
 let recentPostListHTML = "<h2>Recent Posts:</h2><ul>";
 let numberOfRecentPosts = Math.min( recentPostsCutoff, postsArray.length );
 for ( let i = 0; i < numberOfRecentPosts; i++ ) {
