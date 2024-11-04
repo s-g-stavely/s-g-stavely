@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>It&apos;s weird that there&apos;s so much production c&plus;&plus; code despite its flaws</title>
+        <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="its-weird-that-theres-so-much-production-c-code-despite-its-flaws">It's weird that there's so much production c++ code despite its flaws</h1>
+<p>Writing c++ that works correctly is not easy, and most people are not very interested in making sure the behaviour of the code is correct. There's a lot of c++ written by people under time and budget pressures that make it very difficult to take safety and correctness seriously. Naturally, this means that there's a lot of production software with serious bugs in it.</p>
+<p>Nevertheless, this software is used by many people. It's surprising to me how error-tolerant people can be of software. <a href="http://yosefk.com/blog/things-want-to-work-not-punish-errors.html">Yossi Kreinin has written</a> that &quot;things want to work, not punish errors.&quot; He offers a couple of explanations for why things often work out despite being produced under conditions that are far from ideal. I understand him to be giving a few different reasons for this, so I'd like to see which of these could apply to c++ code.</p>
+<p>First, &quot;a solution wants you to find it.&quot; Each piece of the solution points you towards the next piece that fits with it. Even if your solution is not quite right, you might be able to get to a working solution by just modifying your broken solution a bit. This seems pretty language-agnostic and applicable for c++. For example, once you've written a component that solves part of a problem, the API of that component dictates how you use it. There's also a <a href="https://www.dreamsongs.com/Files/DesignedAsDesigner.pdf">wonderful essay by Richard P. Gabriel</a> about how things participate in their own design.</p>
+<p>Next, Kreinin says that people are particularly tolerant a solution's flaws when the solution is giving them a lot of value, meaning that &quot;reality punishes bad management the least in the most impactful cases.&quot; I've certainly seen this when watching people interact with buggy software. As an addendum to this, many people are mandated to use particular software by their workplaces and other institutions that they must interact with, meaning they have no choice but to accept broken software.</p>
+<p>Finally, he notes that &quot;risk-taking is actually rewarding as long as the downside doesn't materialize.&quot; When writing c++, it's very easy to write bugs that will only affect a small fraction of users, or are only relevant when deliberately exploited. If I'm not going out of my way to look for these sorts of issues when writing c++, then chances are high that they exist, but I've saved the effort of looking for them. Of course, the design of c++ makes it very easy to write software with these sorts of bugs.</p>
+<p>It's sad to think about how many people must be harmed by broken software. We shouldn't take it for granted that software works correctly just because it's widely used. While I expect that organisations could improve the quality of their c++ software significantly if they chose to focus on it, that seems unlikely to happen, which is why I think it's better to write software using tools that prevent these sorts of bugs in the first place.</p>
+
+        
+        
+    </body>
+    </html>

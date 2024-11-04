@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog Post</title> <!-- If you leave title as "Blog Post", it will automatically be updated to the post title -->
+    <link rel="icon" href="../images/favicon.png" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"> 
+    <link href="../style/style.css" rel="stylesheet" type="text/css" media="all">    
+  </head>
+  <body>
+    <div id="container">
+    <div id="header">...</div>
+    <div id="content">
+      <h1 id="postTitleH1"></h1>
+      <h4 id="postDate"></h4>
+      
+      <h1 id="prerequisites">Prerequisites</h1>
+      <ul>
+      <li>An android phone with a decent camera</li>
+      <li>Windows PC</li>
+      <li>A USB cable to connect that phone to your PC</li>
+      <li>A way of positioning your phone such that it can capture your face. I used a clamp to attach my phone to my monitor</li>
+      </ul>
+      <h1 id="setup-steps">Steup steps</h1>
+      <ul>
+      <li>(Optional step, recommended if you plan to use your phone only for this and nothing else) Perform a factory reset of your phone, put phone into silent mode</li>
+      <li>Install the <a href="https://reincubate.com/camo/">Reincubate Camo</a> app on your PC</li>
+      <li>Install the <a href="https://play.google.com/store/apps/details?id=com.reincubate.camo">Android app</a> on your android phone</li>
+      <li>Follow the instructions in the apps to get the phone configured to transmit video</li>
+      <li>Confirm you can open your video calling app and use Camo as a video source</li>
+      <li>Install <a href="https://github.com/Genymobile/scrcpy">Scrcpy</a> by downloading the windows executable and extracting it somewhere</li>
+      <li>Run Scrcpy. You should be able to control your phone's screen with the mouse. Middle click to press the home button, Alt+P to lock the screen, right click to wake.</li>
+      </ul>
+      <h1 id="daily-process-to-use-the-webcam">Daily process to use the webcam</h1>
+      <ul>
+      <li>Launch the windows Camo app</li>
+      <li>Launch Scrcpy and use it to open the phone Camo app</li>
+      <li>Make your video call</li>
+      <li>When finished, in Scrcpy press Alt-P to lock the screen</li>
+      </ul>
+
+      
+      
+    <div id="nextprev"></div>
+    </div> <!-- end of div id="content" -->
+    <div id="footer"></div>
+    </div> <!-- end of div id="container" -->
+  <!-- Here's the link to our JavaScript! -->
+  <script src="../script.js"></script>
+  </body>
+</html>
