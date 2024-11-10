@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Generator</title>
+    <script src="./3rdparty/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #code {
+            margin-top: 40px;
+            position: relative;
+            width: 128px;
+            height: 128px;
+        }
+        #svg-barcode {
+            margin-top : 20px;
+            width: 100%;
+            height: 100%;
+        }
+        .bits {
+            margin-top: 10px;
+            font-family: monospace;
+            word-break: break-all;
+            width: 400px;
+        }
+        .widths {
+            margin-top: 10px;
+            font-family: monospace;
+            word-break: break-all;
+            width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Code Generator</h1>
+    <input type="text" id="text-input" placeholder="Enter text here">
+    <svg id="svg-barcode"></svg>
+    <div id="bits" class="bits"></div>
+    <div id="widths" class="widths"></div>
+
+    <script>
+        const input = document.getElementById('text-input');
+        const bitsContainer = document.getElementById('bits');
+        const widthsContainer = document.getElementById('widths');
+
+        input.addEventListener('input', generateCode);
+
+        function generateCode() {
+            const text = input.value;
+            JsBarcode("#svg-barcode", text, {
+                displayValue: true
+            });
+
+            displayBits(text);
+            displayWidths();
+        }
+
+        function displayBits(text) {
+            let bits = '';
+            for (let i = 0; i < text.length; i++) {
+                bits += text.charCodeAt(i).toString(2).padStart(8, '0') + ' ';
+            }
+            bitsContainer.innerText = bits.trim();
+        }
+
+        function showWidth(svg, width, x, y) {
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('font-size', '10');
+            text.setAttribute('font-family', 'monospace');
+            text.setAttribute('fill', '#000000');
+            text.textContent = width;
+            // append to the `g` child of the svg
+            svg.querySelector('g').appendChild(text);
+        }
+
+        function handleSingleChar(svg, rects) {
+
+        }
+
+        function displayWidths() {
+            const svg = document.getElementById('svg-barcode');
+            const rects = svg.querySelector('g').querySelectorAll('rect');
+            let widths = '';
+
+            let firstBarWidth = rects[0].getAttribute('width');
+            let minBarWidth = firstBarWidth / 2;
+
+            let rect = rects[0];
+            let nextRect = rects[1];
+
+            let barcodeData = {
+                start : {
+                    
+                }
+            }
+
+            for (let rectIndex = 0; rectIndex < rects.length; rectIndex++) {
+                const width = rect.getAttribute('width') / minBarWidth;
+                widths += width + ' ';
+
+                showWidth(svg, width, rect.getAttribute('x'), parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) + 10);
+
+                if (nextRect) {
+                    nextX = parseFloat(nextRect.getAttribute('x'));
+                    whiteGap = (nextX - (parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')))) / minBarWidth;
+
+                    showWidth(svg, whiteGap, parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')), parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) + 10);
+
+                    rect = nextRect;
+                    nextRect = rects[rectIndex + 1];
+                }
+            }
+            widthsContainer.innerText = widths.trim();
+        }
+    </script>
+</body>
+</html>
