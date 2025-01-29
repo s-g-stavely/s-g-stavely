@@ -17,8 +17,8 @@
             <p>Try editing the text below to see how the barcode changes!</p>
             
             <div style="text-align: center;">
-                <input type="text" id="barcodeInput" placeholder="type something" value="type something" style="display: block; margin: 0 auto 20px auto; padding: 5px; width: 200px; text-align: center;">
                 <canvas id="barcodeCanvas" style="display: block; margin: 0 auto;"></canvas>
+                <input type="text" id="barcodeInput" placeholder="type something" value="type something" style="display: block; margin: 20px auto 0 auto; padding: 5px; width: 200px; text-align: center;">
             </div>
 
 
@@ -191,26 +191,38 @@
                 // Default to "type something" if text is empty
                 text = text?.trim() || "type something";
                 
+                // Get device pixel ratio and backing store ratio
+                const dpr = window.devicePixelRatio || 1;
+                
+                // Set canvas size in actual pixels
                 const maxWidth = container.clientWidth - 40; // Leave some padding
                 const unitWidth = 3;
-                const quietZoneModules = 10; // 10 modules on each side
+                const quietZoneModules = 10;
                 
                 // Encode the text into barcode sections
                 const sections = encodeBarcodeText(text);
                 
-                // Calculate total width needed including quiet zones
+                // Calculate dimensions
                 const totalUnits = sections.reduce((sum, section) => 
                     sum + section.pattern.reduce((s, val) => s + val, 0), 0) + (quietZoneModules * 2);
                 
-                // Calculate the actual unit width to fit the container
                 const calculatedUnitWidth = Math.min(unitWidth, maxWidth / totalUnits);
                 const barcodeWidth = totalUnits * calculatedUnitWidth;
                 
-                // Set up canvas
-                canvas.width = barcodeWidth;
-                canvas.height = 200;
+                // Set display size
+                canvas.style.width = barcodeWidth + 'px';
+                canvas.style.height = '200px';
+                
+                // Set actual size in memory
+                canvas.width = barcodeWidth * dpr;
+                canvas.height = 200 * dpr;
+                
+                // Scale context to handle device pixel ratio
+                ctx.scale(dpr, dpr);
+                
+                // Clear canvas
                 ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillRect(0, 0, barcodeWidth, 200);
                 
                 // Start drawing position after quiet zone
                 let x = quietZoneModules * calculatedUnitWidth;
