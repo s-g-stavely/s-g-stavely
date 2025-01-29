@@ -189,7 +189,7 @@
                 const container = document.getElementById('container');
                 
                 // Default to "beeep" if text is empty
-                text = text?.trim() || "beeep";
+                text = text || "beeep";
                 
                 // Get device pixel ratio and backing store ratio
                 const dpr = window.devicePixelRatio || 1;
