@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog Post</title> <!-- If you leave title as "Blog Post", it will automatically be updated to the post title -->
+    <link rel="icon" href="../images/favicon.png" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"> 
+    <link href="../style/style.css" rel="stylesheet" type="text/css" media="all">    
+  </head>
+    <body>
+        <div id="container">
+        <div id="header">...</div>
+        <div id="content">
+            <h1 id="postTitleH1"></h1>
+            <h4 id="postDate"></h4>
+            
+            <p>Try editing the text below to see how the barcode changes!</p>
+            
+            <div style="text-align: center;">
+                <input type="text" id="barcodeInput" placeholder="type something" value="type something" style="display: block; margin: 0 auto 20px auto; padding: 5px; width: 200px; text-align: center;">
+                <canvas id="barcodeCanvas" style="display: block; margin: 0 auto;"></canvas>
+            </div>
+
+
+        <script>
+            // Code 128B character to value mapping (values 0 to 95 represent ASCII 32 to 127)
+            const codeBCharToValue = {
+                ' ': 0,  '!': 1,  '"': 2,  '#': 3,  '$': 4,  '%': 5,  '&': 6,  "'": 7,
+                '(': 8,  ')': 9,  '*': 10, '+': 11, ',': 12, '-': 13, '.': 14, '/': 15,
+                '0': 16, '1': 17, '2': 18, '3': 19, '4': 20, '5': 21, '6': 22, '7': 23,
+                '8': 24, '9': 25, ':': 26, ';': 27, '<': 28, '=': 29, '>': 30, '?': 31,
+                '@': 32, 'A': 33, 'B': 34, 'C': 35, 'D': 36, 'E': 37, 'F': 38, 'G': 39,
+                'H': 40, 'I': 41, 'J': 42, 'K': 43, 'L': 44, 'M': 45, 'N': 46, 'O': 47,
+                'P': 48, 'Q': 49, 'R': 50, 'S': 51, 'T': 52, 'U': 53, 'V': 54, 'W': 55,
+                'X': 56, 'Y': 57, 'Z': 58, '[': 59, '\\': 60,']': 61, '^': 62, '_': 63,
+                '`': 64, 'a': 65, 'b': 66, 'c': 67, 'd': 68, 'e': 69, 'f': 70, 'g': 71,
+                'h': 72, 'i': 73, 'j': 74, 'k': 75, 'l': 76, 'm': 77, 'n': 78, 'o': 79,
+                'p': 80, 'q': 81, 'r': 82, 's': 83, 't': 84, 'u': 85, 'v': 86, 'w': 87,
+                'x': 88, 'y': 89, 'z': 90, '{': 91, '|': 92, '}': 93, '~': 94
+            };
+
+            // Add Code C specific mappings (00-99)
+            const codeCDigitPairToValue = {};
+            for (let i = 0; i < 100; i++) {
+                codeCDigitPairToValue[i.toString().padStart(2, '0')] = i;
+            }
+
+            // Code 128 value to bar pattern mapping
+            const valueToPattern = [
+                [2, 1, 2, 2, 2, 2], [2, 2, 2, 1, 2, 2], [2, 2, 2, 2, 2, 1], // 0-2
+                [1, 2, 1, 2, 2, 3], [1, 2, 1, 3, 2, 2], [1, 3, 1, 2, 2, 2], // 3-5
+                [1, 2, 2, 2, 1, 3], [1, 2, 2, 3, 1, 2], [1, 3, 2, 2, 1, 2], // 6-8
+                [2, 2, 1, 2, 1, 3], [2, 2, 1, 3, 1, 2], [2, 3, 1, 2, 1, 2], // 9-11
+                [1, 1, 2, 2, 3, 2], [1, 2, 2, 1, 3, 2], [1, 2, 2, 2, 3, 1], // 12-14
+                [1, 1, 3, 2, 2, 2], [1, 2, 3, 1, 2, 2], [1, 2, 3, 2, 2, 1], // 15-17
+                [2, 2, 3, 2, 1, 1], [2, 2, 1, 1, 3, 2], [2, 2, 1, 2, 3, 1], // 18-20
+                [2, 1, 3, 2, 1, 2], [2, 2, 3, 1, 1, 2], [3, 1, 2, 1, 3, 1], // 21-23
+                [3, 1, 1, 2, 2, 2], [3, 2, 1, 1, 2, 2], [3, 2, 1, 2, 2, 1], // 24-26
+                [3, 1, 2, 2, 1, 2], [3, 2, 2, 1, 1, 2], [3, 2, 2, 2, 1, 1], // 27-29
+                [2, 1, 2, 1, 2, 3], [2, 1, 2, 3, 2, 1], [2, 3, 2, 1, 2, 1], // 30-32
+                [1, 1, 1, 3, 2, 3], [1, 3, 1, 1, 2, 3], [1, 3, 1, 3, 2, 1], // 33-35
+                [1, 1, 2, 3, 1, 3], [1, 3, 2, 1, 1, 3], [1, 3, 2, 3, 1, 1], // 36-38
+                [2, 1, 1, 3, 1, 3], [2, 3, 1, 1, 1, 3], [2, 3, 1, 3, 1, 1], // 39-41
+                [1, 1, 2, 1, 3, 3], [1, 1, 2, 3, 3, 1], [1, 3, 2, 1, 3, 1], // 42-44
+                [1, 1, 3, 1, 2, 3], [1, 1, 3, 3, 2, 1], [1, 3, 3, 1, 2, 1], // 45-47
+                [3, 1, 3, 1, 2, 1], [2, 1, 1, 3, 3, 1], [2, 3, 1, 1, 3, 1], // 48-50
+                [2, 1, 3, 1, 1, 3], [2, 1, 3, 3, 1, 1], [2, 1, 3, 1, 3, 1], // 51-53
+                [3, 1, 1, 1, 2, 3], [3, 1, 1, 3, 2, 1], [3, 3, 1, 1, 2, 1], // 54-56
+                [3, 1, 2, 1, 1, 3], [3, 1, 2, 3, 1, 1], [3, 3, 2, 1, 1, 1], // 57-59
+                [3, 1, 4, 1, 1, 1], [2, 2, 1, 4, 1, 1], [4, 3, 1, 1, 1, 1], // 60-62
+                [1, 1, 1, 2, 2, 4], [1, 1, 1, 4, 2, 2], [1, 2, 1, 1, 2, 4], // 63-65
+                [1, 2, 1, 4, 2, 1], [1, 4, 1, 1, 2, 2], [1, 4, 1, 2, 2, 1], // 66-68
+                [1, 1, 2, 2, 1, 4], [1, 1, 2, 4, 1, 2], [1, 2, 2, 1, 1, 4], // 69-71
+                [1, 2, 2, 4, 1, 1], [1, 4, 2, 1, 1, 2], [1, 4, 2, 2, 1, 1], // 72-74
+                [2, 4, 1, 2, 1, 1], [2, 2, 1, 1, 1, 4], [4, 1, 3, 1, 1, 1], // 75-77
+                [2, 4, 1, 1, 1, 2], [1, 3, 4, 1, 1, 1], [1, 1, 1, 2, 4, 2], // 78-80
+                [1, 2, 1, 1, 4, 2], [1, 2, 1, 2, 4, 1], [1, 1, 4, 2, 1, 2], // 81-83
+                [1, 2, 4, 1, 1, 2], [1, 2, 4, 2, 1, 1], [4, 1, 1, 2, 1, 2], // 84-86
+                [4, 2, 1, 1, 1, 2], [4, 2, 1, 2, 1, 1], [2, 1, 2, 1, 4, 1], // 87-89
+                [2, 1, 4, 1, 2, 1], [4, 1, 2, 1, 2, 1], [1, 1, 1, 1, 4, 3], // 90-92
+                [1, 1, 1, 3, 4, 1], [1, 3, 1, 1, 4, 1], [1, 1, 4, 1, 1, 3], // 93-95
+                
+                // Special function patterns (96-102)
+                [1, 1, 4, 3, 1, 1], // 96 - FNC3
+                [4, 1, 1, 1, 1, 3], // 97 - FNC2
+                [4, 1, 1, 3, 1, 1], // 98 - SHIFT
+                [1, 1, 3, 1, 4, 1], // 99 - CODE C
+                [1, 1, 4, 1, 3, 1], // 100 - CODE B / FNC4
+                [3, 1, 1, 1, 4, 1], // 101 - CODE A
+                [4, 1, 1, 1, 3, 1]  // 102 - FNC1
+            ];
+
+            // Special function patterns
+            const START_B = [2, 1, 1, 2, 1, 4];  // Start Code B
+            const START_C = [2, 1, 1, 2, 3, 2];  // Start Code C
+            const STOP = [2, 3, 3, 1, 1, 1, 2];
+            const CODE_C = 99;  // Switch to Code C
+            const CODE_B = 100; // Switch to Code B
+
+            class BarcodeSection {
+                constructor(pattern, text, type = 'data', value = null, codeSet = 'B') {
+                    this.pattern = pattern;
+                    this.text = text;
+                    this.type = type;
+                    this.value = value;
+                    this.codeSet = codeSet;
+                }
+            }
+
+            function encodeBarcodeText(text) {
+                const sections = [];
+                let currentMode = 'B';
+                let i = 0;
+                
+                // Analyze text to determine best encoding
+                while (i < text.length) {
+                    // Look ahead for digit sequences
+                    let digitCount = 0;
+                    while (i + digitCount < text.length && /\d/.test(text[i + digitCount])) {
+                        digitCount++;
+                    }
+
+                    if (digitCount >= 4 && currentMode !== 'C') {
+                        // Switch to Code C
+                        if (sections.length === 0) {
+                            // Start with Code C
+                            sections.push(new BarcodeSection(START_C, 'START', 'start', null, 'C'));
+                        } else {
+                            sections.push(new BarcodeSection(valueToPattern[CODE_C], 'C', 'control', CODE_C, 'C'));
+                        }
+                        currentMode = 'C';
+                    } else if (digitCount < 2 && currentMode === 'C') {
+                        // Switch back to Code B
+                        sections.push(new BarcodeSection(valueToPattern[CODE_B], 'B', 'control', CODE_B, 'B'));
+                        currentMode = 'B';
+                    }
+
+                    if (currentMode === 'C' && digitCount >= 2) {
+                        // Encode digit pairs
+                        const pair = text.substr(i, 2);
+                        sections.push(new BarcodeSection(valueToPattern[codeCDigitPairToValue[pair]], pair, 'data', codeCDigitPairToValue[pair], 'C'));
+                        i += 2;
+                    } else {
+                        // Code B encoding
+                        if (sections.length === 0) {
+                            sections.push(new BarcodeSection(START_B, 'START', 'start', null, 'B'));
+                        }
+                        const char = text[i];
+                        if (codeBCharToValue[char] !== undefined) {
+                            sections.push(new BarcodeSection(valueToPattern[codeBCharToValue[char]], char, 'data', codeBCharToValue[char], 'B'));
+                        }
+                        i++;
+                    }
+                }
+
+                // Calculate and add checksum
+                let checksum = calculateChecksum(sections);
+                sections.push(new BarcodeSection(
+                    valueToPattern[checksum],
+                    'CHK',
+                    'checksum',
+                    checksum,
+                    currentMode
+                ));
+                
+                // Add stop pattern
+                sections.push(new BarcodeSection(STOP, 'STOP', 'stop'));
+                
+                return sections;
+            }
+
+            function calculateChecksum(sections) {
+                let checksum = sections[0].codeSet === 'C' ? 105 : 104; // Start value
+                let weight = 1;
+
+                for (const section of sections) {
+                    if (section.type === 'data' || section.type === 'control') {
+                        checksum += weight * section.value;
+                        weight++;
+                    }
+                }
+                
+                return checksum % 103;
+            }
+
+            function drawBarcode(text) {
+                const canvas = document.getElementById('barcodeCanvas');
+                const ctx = canvas.getContext('2d');
+                const container = document.getElementById('container');
+                
+                // Default to "type something" if text is empty
+                text = text?.trim() || "type something";
+                
+                const maxWidth = container.clientWidth - 40; // Leave some padding
+                const unitWidth = 3;
+                const quietZoneModules = 10; // 10 modules on each side
+                
+                // Encode the text into barcode sections
+                const sections = encodeBarcodeText(text);
+                
+                // Calculate total width needed including quiet zones
+                const totalUnits = sections.reduce((sum, section) => 
+                    sum + section.pattern.reduce((s, val) => s + val, 0), 0) + (quietZoneModules * 2);
+                
+                // Calculate the actual unit width to fit the container
+                const calculatedUnitWidth = Math.min(unitWidth, maxWidth / totalUnits);
+                const barcodeWidth = totalUnits * calculatedUnitWidth;
+                
+                // Set up canvas
+                canvas.width = barcodeWidth;
+                canvas.height = 200;
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Start drawing position after quiet zone
+                let x = quietZoneModules * calculatedUnitWidth;
+                
+                // Draw each section
+                for (const section of sections) {
+                    const sectionStartX = x;
+                    const sectionWidth = section.pattern.reduce((sum, val) => sum + val * calculatedUnitWidth, 0);
+                    
+                    // Draw the bars
+                    let isBar = true;
+                    for (const width of section.pattern) {
+                        if (isBar) {
+                            ctx.fillStyle = 'black';
+                            ctx.fillRect(x, 20, width * calculatedUnitWidth, 130);
+                        }
+                        x += width * calculatedUnitWidth;
+                        isBar = !isBar;
+                    }
+                    
+                    // Draw the text
+                    ctx.font = section.type === 'data' ? '16px Arial' : 
+                              section.type === 'control' ? 'bold 12px Arial' : 
+                              '12px Arial';
+                    ctx.fillStyle = section.type === 'control' ? '#0099ff' : // Blue for code switches
+                                  section.type === 'data' ? 'black' : 
+                                  '#666'; // Gray for other non-data text
+                    ctx.textAlign = 'center';
+                    
+                    if (section.type === 'checksum') {
+                        ctx.fillText('CHK', sectionStartX + sectionWidth/2, 165);
+                        ctx.fillText(`(${section.value})`, sectionStartX + sectionWidth/2, 180);
+                    } else if (section.type === 'start') {
+                        ctx.fillStyle = '#666';
+                        ctx.fillText('START', sectionStartX + sectionWidth/2, 165);
+                        ctx.fillStyle = '#0099ff';
+                        ctx.font = 'bold 12px Arial';
+                        ctx.fillText(section.codeSet, sectionStartX + sectionWidth/2, 180);
+                    } else {
+                        ctx.fillText(section.text, sectionStartX + sectionWidth/2, 170);
+                    }
+                    
+                    // Draw separator line
+                    if (section.type !== 'stop') {
+                        ctx.beginPath();
+                        ctx.strokeStyle = '#0099ff';
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([3, 3]);
+                        ctx.moveTo(x, 10);
+                        ctx.lineTo(x, 170);
+                        ctx.stroke();
+                        ctx.setLineDash([]);
+                    }
+                }
+            }
+
+            // Set up event listener
+            const input = document.getElementById('barcodeInput');
+            input.addEventListener('input', () => {
+                drawBarcode(input.value);
+            });
+
+            // Set initial input value and generate barcode
+            input.value = "type something";
+            drawBarcode(input.value);
+
+            // Add window resize handler to redraw barcode when window is resized
+            window.addEventListener('resize', () => {
+                const input = document.getElementById('barcodeInput');
+                drawBarcode(input.value);
+            });
+        </script>
+
+        <p>You can check out the Wikipedia page for <a href="https://en.wikipedia.org/wiki/Code_128">Code 128</a> for the details, but here's the basics. </p>
+
+        <p>Each character is represented as a series of bars and spaces. The barcode always starts with the START sequence, and ends with the STOP sequence.</p>
+
+        <p>For error detection, there's a checksum just before the STOP sequence.</p>
+
+        <p>There are actually three different ways of encoding data into the barcode, but this page only supports two: Code B and Code C. Code C is used for encoding numbers, and Code B is used for encoding text. Try typing several numbers in a row to see it switching between encodings.</p>
+    </body>
+
+    <h3>Some "interesting" facts</h3>
+
+    <p>I don't think the specification prescribes when to switch between the different encodings. Here, if there's 4 digits in a row, it switches to Code C, but that's not always going to be optimal. Wikipedia suggests using dynamic programming to find the optimal encoding. Neat!</p>
+
+    <p>The specification for the format is defined in ISO/IEC 15417:2007, which you have to pay to read. That's a shame.</p>
+        
+        
+        
+    </body>
+      
+    <div id="nextprev"></div>
+    </div> <!-- end of div id="content" -->
+    <div id="footer"></div>
+    </div> <!-- end of div id="container" -->
+  <script src="../script.js"></script>
+  </body>
+</html>
