@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog Post</title> <!-- If you leave title as "Blog Post", it will automatically be updated to the post title -->
+    <link rel="icon" href="../images/favicon.png" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8"> 
+    <link href="../style/style.css" rel="stylesheet" type="text/css" media="all">    
+  </head>
+  <body>
+    <div id="container">
+    <div id="header">...</div>
+    <div id="content">
+      <h1 id="postTitleH1"></h1>
+      <h4 id="postDate"></h4>
+      
+      <p>I've spent a little time writing software that runs in a manufacturing line, for calibrating and testing the hardware being produced. Here's the design goals of this software, as I see it.</p>
+      <h2 id="think-about-the-users">Think about the users</h2>
+      <p>Your software is being used as a means to an end, by a person under pressure to keep the line productive. They are not necessarily skilled with computers. They will be using your software to perform many of the same actions over and over. Design with them in mind, so that you make their life easier, not harder.</p>
+      <p>Create a UI that can be easily understood and interacted with. Use big text and buttons. Use bright green to indicate success and red for failure. Don't worry whether it looks good.</p>
+      <h2 id="be-ready-for-errors">Be ready for errors</h2>
+      <p>Be clear about the causes of errors, using language that the user will be able to understand. Try to give enough information that they can troubleshoot the problem. If possible, permit the user to retry failures, so that they don't need to start the entire process over again. Keep log files around to help with debugging.</p>
+      <p>Since your software is interfacing with the physical world, all sorts of weird things can happen. It pays to watch someone actually using it, and see what's difficult for them.</p>
+      <h2 id="decide-whether-to-be-strict-or-forgiving">Decide whether to be strict or forgiving</h2>
+      <p>It's hard to write good instructions for how to use your software. What's more, in practice people will often choose not to follow them. They might do this because they've figured out a better way of doing the work, or because they need to use the software for something you didn't plan for. They also might simply be under pressure to get work done quickly, and willing to subvert the intended process to do so.</p>
+      <p>You should consider how much flexibility you want to build into the process. Can steps be skipped? Can config values be edited by hand?</p>
+      
+    <div id="nextprev"></div>
+    </div> <!-- end of div id="content" -->
+    <div id="footer"></div>
+    </div> <!-- end of div id="container" -->
+  <!-- Here's the link to our JavaScript! -->
+  <script src="../script.js"></script>
+  </body>
+</html>
