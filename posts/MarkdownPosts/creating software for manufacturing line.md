@@ -18,4 +18,4 @@ Since your software is interfacing with the physical world, all sorts of weird t
 
 It's hard to write good instructions for how to use your software. What's more, in practice people will often choose not to follow them. They might do this because they've figured out a better way of doing the work, or because they need to use the software for something you didn't plan for. They also might simply be under pressure to get work done quickly, and willing to subvert the intended process to do so.
 
-You should consider how much flexibility you want to build into the process. Can steps be skipped? Can config values be edited by hand? 
+So, you should consider how much flexibility you want to build into the process. Can steps be skipped? Can config values be edited by hand? Making it more flexible means it can handle more real-world problems, but risks it being misused in more ways.
