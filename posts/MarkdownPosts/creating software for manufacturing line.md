@@ -1,6 +1,6 @@
 # Creating software for manufacturing lines
 
-I've spent a little time writing software that runs in a manufacturing line, for calibrating and testing the hardware being produced. Here's the design goals of this software, as I see it.
+I've spent a little time writing software that runs in a manufacturing line, for calibrating and testing the hardware being produced. Here's some design goals of this software that I feel are important.
 
 ## Think about the users
 
